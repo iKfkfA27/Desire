@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Booger Cleaning Game</title>
+    <style>
+        body {
+            margin: 0;
+            height: 100vh; /* Full height */
+            background-image: url('https://img.freepik.com/premium-photo/with-green-slime-liquid-background_839169-14071.jpg?w=1380');
+            background-size: cover; /* Cover the entire screen */
+            background-position: center; /* Center the image */
+            background-repeat: no-repeat; /* Prevent repeating */
+            overflow: hidden;
+        }
+        #boogerImage {
+            position: relative;
+            display: inline-block;
+            width: 100%;
+            height: 500px; /* Adjust height as needed */
+            background-image: url('https://i.ibb.co/0Yd3hgP/IMG-2049.jpg');
+            background-size: cover; /* Cover the entire screen */
+            background-position: center; /* Center the image */
+            background-repeat: no-repeat; /* Prevent repeating */
+            overflow: hidden;
+        }
+        .booger {
+            position: absolute;
+            width: 50px;
+            height: 50px;
+            background-color: #4CAF50; /* Booger color */
+            border-radius: 50%;
+            left: calc(10% + (Math.random() * 80)); /* Spread out boogers within the container */
+            top: calc(10% + (Math.random() * 80)); /* Spread out boogers within the container */
+        }
+        #cleanButton {
+            bottom: 20px;
+            position: absolute;
+            display: block;
+            padding: 10px;
+            background-color: #7FFF00; /* Booger-like color */
+            border: none;
+            border-radius: 10px;
+            font-size: 20px;
+            cursor: pointer;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+        }
+     #brush {
+    position: absolute;
+    display: none;
+    width: 10px; /* Width of the brush handle */
+    height: 100px; /* Height of the brush handle */
+    background-color: #8B4513; /* Brown color for the handle */
+    border-radius: 5px; /* Rounded edges */
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    transition: opacity 0.2s;
+    transform-origin: bottom; /* Origin for rotation */
+}
+
+#brush::before {
+    content: '';
+    position: absolute;
+    bottom: 100%; /* Position above the handle */
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60px; /* Width of the brush bristles */
+    height: 30px; /* Height of the brush bristles */
+    background: linear-gradient(to right, #FFD700 30%, #FF6347 70%); /* Gradient for bristles */
+    border-radius: 0 0 10px 10px; /* Rounded bottom corners */
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+}
+
+#brush::after {
+    content: '';
+    position: absolute;
+    bottom: 100%; /* Position above the handle */
+    left: 50%;
+    transform: translateX(-50%);
+    width: 15px; /* Width of the brush tip */
+    height: 15px; /* Height of the brush tip */
+    background-color: #FFD700; /* Color for the brush tip */
+    border-radius: 50%; /* Circular tip */
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+}
+
+    </style>
+</head>
+<body>
+    <h1>Welcome to the Booger Cleaning Game!</h1>
+    <div id="boogerImage">
+        <div class="booger"></div>
+        <div class="booger"></div>
+        <div class="booger"></div>
+        <div class="booger"></div>
+        <div class="booger"></div>
+    </div>
+    <button id="cleanButton">Start Cleaning Progress</button>
+    <div id="brush"></div>
+
+    <script>
+        const boogers = document.querySelectorAll('.booger');
+        const brush = document.getElementById('brush');
+        let cleaning = false;
+
+        document.getElementById('cleanButton').onclick = function() {
+            if (cleaning) return; // Prevent multiple clicks
+            cleaning = true;
+            brush.style.display = 'block';
+            document.addEventListener('mousemove', moveBrush);
+            document.addEventListener('mousedown', startCleaning);
+        }
+
+        function moveBrush(event) {
+            brush.style.left = `${event.pageX - 30}px`; // Center the brush
+            brush.style.top = `${event.pageY - 20}px`; // Center the brush
+        }
+
+        function startCleaning() {
+            boogers.forEach(booger => {
+                const boogerRect = booger.getBoundingClientRect();
+                const brushRect = brush.getBoundingClientRect();
+
+                if (isColliding(boogerRect, brushRect)) {
+                    booger.style.display = 'none'; // Remove booger on collision
+                }
+            });
+
+            if (Array.from(boogers).every(b => b.style.display === 'none')) {
+                alert('Congratulations! All cleaned!');
+                resetGame();
+            }
+        }
+
+        function isColliding(rect1, rect2) {
+            return !(rect1.right < rect2.left || 
+                     rect1.left > rect2.right || 
+                     rect1.bottom < rect2.top || 
+                     rect1.top > rect2.bottom);
+        }
+
+        function resetGame() {
+            cleaning = false;
+            brush.style.display = 'none';
+            boogers.forEach(booger => {
+                booger.style.display = 'block'; // Reset the game
+                booger.style.left = `${10 + Math.random() * 80}%`; // Randomize position
+                booger.style.top = `${10 + Math.random() * 80}%`; // Randomize position
+            });
+        }
+    </script>
+</body>
+</html>
